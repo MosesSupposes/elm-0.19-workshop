@@ -28,15 +28,11 @@ initialModel =
 
 
 update msg model =
-    {- 👉 TODO: If `msg.description` is "ClickedTag", then
-                set the model's `selectedTag` field to be `msg.data`
+    if msg.description == "ClickedTag" then
+        { model | selectedTag = msg.data }
 
-       💡 HINT: record update syntax looks like this:
-
-                { model | foo = bar }
-
-    -}
-    model
+    else
+        model
 
 
 
@@ -45,16 +41,8 @@ update msg model =
 
 view model =
     let
-        {- 👉 TODO: Filter the articles down to only the ones
-                    that include the currently selected tag.
-
-           💡 HINT: Replace `True` below with something involving
-                    `List.member`, `article.tags`, and `model.selectedTag`
-
-                    Docs for List.member: http://package.elm-lang.org/packages/elm-lang/core/latest/List#member
-        -}
         articles =
-            List.filter (\article -> True)
+            List.filter (\article -> List.member model.selectedTag article.tags)
                 model.allArticles
 
         feed =
@@ -76,6 +64,7 @@ view model =
         ]
 
 
+viewArticle : { a | title : String, description : String } -> Html msg
 viewArticle article =
     div [ class "article-preview" ]
         [ h1 [] [ text article.title ]
@@ -84,6 +73,7 @@ viewArticle article =
         ]
 
 
+viewBanner : Html msg
 viewBanner =
     div [ class "banner" ]
         [ div [ class "container" ]
@@ -93,6 +83,7 @@ viewBanner =
         ]
 
 
+viewTag : String -> String -> Html { description : String, data : String }
 viewTag selectedTagName tagName =
     let
         otherClass =
@@ -104,21 +95,12 @@ viewTag selectedTagName tagName =
     in
     button
         [ class ("tag-pill " ++ otherClass)
-
-        {- 👉 TODO: Add an `onClick` handler which sends a msg
-                    that our `update` function above will use
-                    to set the currently selected tag to `tagName`.
-
-           💡 HINT: It should look something like this:
-
-                    , onClick { description = … , data = … }
-
-                    👆 Don't forget to add a comma before `onClick`!
-        -}
+        , onClick { description = "ClickedTag", data = tagName }
         ]
         [ text tagName ]
 
 
+viewTags : { a | selectedTag : String, tags : List String } -> Html { description : String, data : String }
 viewTags model =
     div [ class "tag-list" ] (List.map (viewTag model.selectedTag) model.tags)
 
