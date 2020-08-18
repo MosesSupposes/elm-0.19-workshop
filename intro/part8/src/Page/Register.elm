@@ -168,7 +168,7 @@ update msg model =
                 -}
                 request : Http.Request Viewer
                 request =
-                    Debug.todo "Call Http.post to represent a POST to /api/users"
+                    Http.post "http://localhost:3000/api/users" requestBody responseDecoder
 
                 {- 👉 TODO: Use Http.send to turn the request we just defined
                    into a Cmd for `update` to execute.
@@ -182,7 +182,7 @@ update msg model =
                 -}
                 cmd : Cmd Msg
                 cmd =
-                    Cmd.none
+                    Http.send CompletedRegister request
             in
             ( { model | problems = [] }, cmd )
 
