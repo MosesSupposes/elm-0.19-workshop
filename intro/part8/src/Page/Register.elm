@@ -155,13 +155,10 @@ update msg model =
                 responseDecoder =
                     Decode.field "user" Viewer.decoder
 
-                request : Http.Request Viewer
-                request =
-                    Http.post "http://localhost:3000/api/users" requestBody responseDecoder
-
                 cmd : Cmd Msg
                 cmd =
-                    Http.send CompletedRegister request
+                    Http.post "http://localhost:3000/api/users" requestBody responseDecoder
+                        |> Http.send CompletedRegister
             in
             ( { model | problems = [] }, cmd )
 
