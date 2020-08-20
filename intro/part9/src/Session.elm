@@ -1,14 +1,13 @@
-port module Session
-    exposing
-        ( Session
-        , changes
-        , cred
-        , decode
-        , login
-        , logout
-        , navKey
-        , viewer
-        )
+port module Session exposing
+    ( Session
+    , changes
+    , cred
+    , decode
+    , login
+    , logout
+    , navKey
+    , viewer
+    )
 
 import Browser.Navigation as Nav
 import Json.Decode as Decode exposing (Decoder)
@@ -84,21 +83,12 @@ logout =
     sendSessionToJavaScript Nothing
 
 
-{-| 👉 TODO 1 of 2: Replace this do-nothing function with a port that sends the
-authentication token to JavaScript.
-
-    💡 HINT 1: When you convert it to a port, the port's name _must_ match
-    the name JavaScript expects in `intro/server/public/index.html`.
-    That name is not `sendSessionToJavaScript`, so you will need to
-    rename it to match what JS expects!
-
-    💡 HINT 2: After you rename it, some code in this file will break because
-    it was depending on the old name. Follow the compiler errors to fix them!
-
--}
 sendSessionToJavaScript : Maybe String -> Cmd msg
 sendSessionToJavaScript maybeAuthenticationToken =
-    Cmd.none
+    storeSession maybeAuthenticationToken
+
+
+port storeSession : Maybe String -> Cmd msg
 
 
 
@@ -124,7 +114,10 @@ authentication token from JavaScript.
 -}
 receiveSessionFromJavaScript : (Value -> msg) -> Sub msg
 receiveSessionFromJavaScript toMsg =
-    Sub.none
+    onSessionChange toMsg
+
+
+port onSessionChange : (Value -> msg) -> Sub msg
 
 
 decode : Nav.Key -> Value -> Session
